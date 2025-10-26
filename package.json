@@ -1,0 +1,22 @@
+{
+  "name": "sistema-comanda-app",
+  "version": "1.0.0",
+  "description": "sistema de comanda para Restaurante",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --watch",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "comanda",
+    "restaurante",
+    "electron"
+  ],
+  "author": "Senac",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^latest"
+  }
+}

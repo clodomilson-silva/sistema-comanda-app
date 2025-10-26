@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistema de Comanda - Restaurante Senac</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Sistema de Comanda - Restaurante Senac</h1>
+            <div class="header-actions">
+                <button class="btn btn-success" id="btn-nova-comanda">➕ Nova Comanda</button>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="garcom">Garçom</button>
+            <button class="tab-btn" data-tab="bar-cozinha">Bar/Cozinha</button>
+            <button class="tab-btn" data-tab="todas-comandas">Todas as Comandas</button>
+        </div>
+        
+        <div class="tab-content active" id="garcom">
+            <div class="comanda-list" id="comanda-list-garcom"></div>
+        </div>
+        
+        <div class="tab-content" id="bar-cozinha">
+            <div class="status-toggle">
+                <button class="btn btn-primary active" id="btn-preparando">Preparando</button>
+                <button class="btn btn-success" id="btn-pronto">Pronto</button>
+            </div>
+            <div class="comanda-list" id="comanda-list-bar-cozinha"></div>
+        </div>
+        
+        <div class="tab-content" id="todas-comandas">
+            <div class="comanda-list" id="comanda-list-todas"></div>
+        </div>
+    </div>
+
+    <!-- Modais -->
+    <div id="modal-nova-comanda" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Comanda</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="form-nova-comanda">
+                <div class="form-group">
+                    <label for="numero-comanda">Número da Comanda:</label>
+                    <input type="text" id="numero-comanda" required>
+                </div>
+                <div class="form-group">
+                    <label for="mesa-comanda">Número da Mesa:</label>
+                    <input type="number" id="mesa-comanda" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="cliente-comanda">Nome do Cliente:</label>
+                    <input type="text" id="cliente-comanda" placeholder="Nome do cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="garcom-comanda">Nome do Garçom:</label>
+                    <input type="text" id="garcom-comanda" placeholder="Nome do garçom" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" id="cancelar-nova-comanda">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Criar Comanda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Produto -->
+    <div id="modal-adicionar" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Produto</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Categoria:</label>
+                <div class="category-tabs" id="category-tabs"></div>
+            </div>
+            <div class="form-group">
+                <label>Produtos:</label>
+                <div class="products-grid" id="products-grid"></div>
+            </div>
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" min="1" value="1" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" id="cancelar-adicionar">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmar-adicionar">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

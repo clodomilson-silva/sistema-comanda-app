@@ -1,0 +1,96 @@
+{
+  "comandas": [
+    {
+      "id": 3,
+      "numero": "001",
+      "mesa": 1,
+      "cliente": "gui",
+      "garcom": "gut",
+      "status": "fechada",
+      "itens": [],
+      "dataCriacao": "2025-10-26T14:56:05.047Z"
+    },
+    {
+      "id": 5,
+      "numero": "0001",
+      "mesa": 1,
+      "cliente": "tur",
+      "garcom": "gui",
+      "status": "fechada",
+      "itens": [
+        {
+          "id": 4,
+          "produtoId": 1,
+          "nome": "Coca-Cola 350ml",
+          "preco": 5,
+          "quantidade": 1
+        }
+      ],
+      "dataCriacao": "2025-10-26T15:59:28.878Z"
+    }
+  ],
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "Coca-Cola 350ml",
+      "preco": 5,
+      "categoria": "bebidas"
+    },
+    {
+      "id": 2,
+      "nome": "Suco Natural",
+      "preco": 8,
+      "categoria": "bebidas"
+    },
+    {
+      "id": 3,
+      "nome": "Água Mineral",
+      "preco": 3,
+      "categoria": "bebidas"
+    },
+    {
+      "id": 4,
+      "nome": "X-Burger",
+      "preco": 15,
+      "categoria": "lanches"
+    },
+    {
+      "id": 5,
+      "nome": "X-Salada",
+      "preco": 18,
+      "categoria": "lanches"
+    },
+    {
+      "id": 6,
+      "nome": "Batata Frita",
+      "preco": 12,
+      "categoria": "acompanhamentos"
+    },
+    {
+      "id": 7,
+      "nome": "Porção de Calabresa",
+      "preco": 25,
+      "categoria": "acompanhamentos"
+    },
+    {
+      "id": 8,
+      "nome": "Sorvete",
+      "preco": 10,
+      "categoria": "sobremesas"
+    },
+    {
+      "id": 9,
+      "nome": "Pudim",
+      "preco": 8,
+      "categoria": "sobremesas"
+    }
+  ],
+  "categorias": [
+    "bebidas",
+    "lanches",
+    "acompanhamentos",
+    "sobremesas"
+  ],
+  "nextComandaId": 6,
+  "nextItemId": 5
+}
