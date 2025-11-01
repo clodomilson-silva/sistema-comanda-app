@@ -320,7 +320,18 @@ async function fecharComanda(comandaId) {
     }
 }
 
+// Flag para evitar múltiplas configurações
+let modaisConfigurados = false;
+
 function configurarModais() {
+    // Evitar configurar múltiplas vezes
+    if (modaisConfigurados) {
+        console.log('⚠️ Modais já configurados, pulando...');
+        return;
+    }
+    
+    console.log('🔧 Configurando modais...');
+    
     // Modal Nova Comanda
     const modalNovaComanda = document.getElementById('modal-nova-comanda');
     const formNovaComanda = document.getElementById('form-nova-comanda');
@@ -332,8 +343,14 @@ function configurarModais() {
         modalNovaComanda.style.display = 'none';
     });
     
-    formNovaComanda.addEventListener('submit', function(e) {
+    // Remover event listener anterior se existir e adicionar novo
+    const novoForm = formNovaComanda.cloneNode(true);
+    formNovaComanda.parentNode.replaceChild(novoForm, formNovaComanda);
+    
+    novoForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Impedir propagação do evento
+        console.log('📝 Submit do formulário de nova comanda');
         criarNovaComanda();
     });
 
@@ -346,7 +363,17 @@ function configurarModais() {
     document.getElementById('cancelar-adicionar').addEventListener('click', () => {
         modalAdicionar.style.display = 'none';
     });
-    document.getElementById('confirmar-adicionar').addEventListener('click', adicionarProdutoComanda);
+    
+    // Remover event listener anterior se existir
+    const btnConfirmar = document.getElementById('confirmar-adicionar');
+    const novoBtnConfirmar = btnConfirmar.cloneNode(true);
+    btnConfirmar.parentNode.replaceChild(novoBtnConfirmar, btnConfirmar);
+    
+    novoBtnConfirmar.addEventListener('click', function(e) {
+        e.stopPropagation();
+        console.log('➕ Clique no botão confirmar adicionar');
+        adicionarProdutoComanda();
+    });
 
     // Fechar modal ao clicar fora
     window.addEventListener('click', function(e) {
@@ -354,6 +381,9 @@ function configurarModais() {
             e.target.style.display = 'none';
         }
     });
+    
+    modaisConfigurados = true;
+    console.log('✅ Modais configurados com sucesso');
 }
 
 function abrirModalNovaComanda() {
@@ -362,30 +392,41 @@ function abrirModalNovaComanda() {
 }
 
 async function criarNovaComanda() {
-    const numeroComanda = document.getElementById('numero-comanda').value;
+    const numeroComanda = document.getElementById('numero-comanda').value.trim();
     const mesaComanda = parseInt(document.getElementById('mesa-comanda').value);
-    const clienteComanda = document.getElementById('cliente-comanda').value;
-    const garcomComanda = document.getElementById('garcom-comanda').value;
+    const clienteComanda = document.getElementById('cliente-comanda').value.trim();
+    const garcomComanda = document.getElementById('garcom-comanda').value.trim();
     
-    if (numeroComanda && mesaComanda > 0 && clienteComanda && garcomComanda) {
-        try {
-            await window.electronAPI.createComanda({
-                numero: numeroComanda,
-                mesa: mesaComanda,
-                cliente: clienteComanda,
-                garcom: garcomComanda
-            });
-            
-            document.getElementById('modal-nova-comanda').style.display = 'none';
-            await atualizarListaComandas('garcom');
-            document.getElementById('form-nova-comanda').reset();
-            mostrarSucesso('Comanda criada com sucesso!');
-            
-        } catch (error) {
-            mostrarErro('Erro: ' + error.message);
-        }
-    } else {
+    // Validação
+    if (!numeroComanda || !mesaComanda || mesaComanda <= 0 || !clienteComanda || !garcomComanda) {
         mostrarErro('Por favor, preencha todos os campos obrigatórios.');
+        return;
+    }
+    
+    try {
+        // Criar comanda
+        const novaComanda = await window.electronAPI.createComanda({
+            numero: numeroComanda,
+            mesa: mesaComanda.toString(),
+            cliente: clienteComanda,
+            garcom: garcomComanda
+        });
+        
+        console.log('✅ Comanda criada:', novaComanda);
+        
+        // Fechar modal e limpar form
+        document.getElementById('modal-nova-comanda').style.display = 'none';
+        document.getElementById('form-nova-comanda').reset();
+        
+        // Atualizar lista
+        await atualizarListaComandas('garcom');
+        
+        // Mostrar sucesso (SEM ALERT QUE CAUSA DUPLICAÇÃO)
+        console.log('✅ Comanda criada com sucesso!');
+        
+    } catch (error) {
+        console.error('❌ Erro ao criar comanda:', error);
+        mostrarErro('Erro ao criar comanda: ' + error.message);
     }
 }
 
@@ -447,7 +488,14 @@ async function adicionarProdutoComanda() {
     
     const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
     
+    if (quantidade <= 0) {
+        mostrarErro('Quantidade deve ser maior que zero.');
+        return;
+    }
+    
     try {
+        console.log('➕ Adicionando produto:', produtoSelecionado.nome, 'x', quantidade);
+        
         await window.electronAPI.addItemComanda(comandaAtual.id, {
             produtoId: produtoSelecionado.id,
             nome: produtoSelecionado.nome,
@@ -455,13 +503,18 @@ async function adicionarProdutoComanda() {
             quantidade: quantidade
         });
         
+        console.log('✅ Produto adicionado com sucesso!');
+        
+        // Fechar modal e limpar seleção
         document.getElementById('modal-adicionar').style.display = 'none';
-        await atualizarListaComandas('garcom');
         produtoSelecionado = null;
         document.getElementById('quantidade').value = 1;
-        mostrarSucesso('Produto adicionado com sucesso!');
+        
+        // Atualizar lista
+        await atualizarListaComandas('garcom');
         
     } catch (error) {
+        console.error('❌ Erro ao adicionar produto:', error);
         mostrarErro('Erro ao adicionar produto: ' + error.message);
     }
 }
@@ -482,11 +535,39 @@ async function filtrarComandasPorStatus(status) {
 }
 
 function mostrarErro(mensagem) {
-    alert('❌ ' + mensagem);
+    console.error('❌', mensagem);
+    
+    // Criar notificação visual sem alert
+    const notificacao = document.createElement('div');
+    notificacao.className = 'notificacao notificacao-erro';
+    notificacao.innerHTML = `
+        <span>❌ ${mensagem}</span>
+    `;
+    document.body.appendChild(notificacao);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+        notificacao.classList.add('fade-out');
+        setTimeout(() => notificacao.remove(), 300);
+    }, 3000);
 }
 
 function mostrarSucesso(mensagem) {
-    alert('✅ ' + mensagem);
+    console.log('✅', mensagem);
+    
+    // Criar notificação visual sem alert
+    const notificacao = document.createElement('div');
+    notificacao.className = 'notificacao notificacao-sucesso';
+    notificacao.innerHTML = `
+        <span>✅ ${mensagem}</span>
+    `;
+    document.body.appendChild(notificacao);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+        notificacao.classList.add('fade-out');
+        setTimeout(() => notificacao.remove(), 300);
+    }, 3000);
 }
 // Detectar mobile e aplicar configurações
 let isMobile = false;
