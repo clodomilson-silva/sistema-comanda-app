@@ -191,12 +191,21 @@ function criarComandaCard(comanda, aba) {
         </div>
         <div class="comanda-items">
             ${comanda.itens.length > 0 ? 
-                comanda.itens.map(item => `
-                    <div class="comanda-item">
-                        <span>${item.quantidade}x ${item.nome}</span>
-                        <span>R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
-                    </div>
-                `).join('') : 
+                comanda.itens.map(item => {
+                    const tipo = item.type || 'bar';
+                    const tipoLabel = tipo === 'bar' ? '🍸 Bar' : '🥤 Cambuza';
+                    const tipoClass = tipo === 'bar' ? 'tipo-bar' : 'tipo-cambuza';
+                    
+                    return `
+                        <div class="comanda-item">
+                            <div class="item-info">
+                                <span class="item-nome">${item.quantidade}x ${item.nome}</span>
+                                <span class="item-tipo ${tipoClass}">${tipoLabel}</span>
+                            </div>
+                            <span class="item-preco">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
+                        </div>
+                    `;
+                }).join('') : 
                 '<p style="text-align: center; color: #999; padding: 10px;">Nenhum produto adicionado</p>'
             }
         </div>
@@ -494,16 +503,21 @@ async function adicionarProdutoComanda() {
     }
     
     try {
-        console.log('➕ Adicionando produto:', produtoSelecionado.nome, 'x', quantidade);
+        console.log('➕ Adicionando produto:', produtoSelecionado.nome, 'x', quantidade, `[${produtoSelecionado.type}]`);
         
         await window.electronAPI.addItemComanda(comandaAtual.id, {
             produtoId: produtoSelecionado.id,
             nome: produtoSelecionado.nome,
             preco: produtoSelecionado.preco,
-            quantidade: quantidade
+            quantidade: quantidade,
+            type: produtoSelecionado.type || 'bar'
         });
         
         console.log('✅ Produto adicionado com sucesso!');
+        
+        // Mensagem de confirmação com destino
+        const destino = (produtoSelecionado.type || 'bar') === 'bar' ? 'Bar' : 'Cambuza';
+        mostrarSucesso(`Produto enviado ao ${destino}!`);
         
         // Fechar modal e limpar seleção
         document.getElementById('modal-adicionar').style.display = 'none';

@@ -238,13 +238,55 @@ header h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 8px 0;
     border-bottom: 1px solid #bdc3c7;
     font-size: 0.85em;
+    gap: 10px;
 }
 
 .comanda-item:last-child {
     border-bottom: none;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.item-nome {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.item-preco {
+    font-weight: 600;
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+
+.item-tipo {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.tipo-bar {
+    background-color: #3498db;
+    color: white;
+    box-shadow: 0 1px 3px rgba(52, 152, 219, 0.3);
+}
+
+.tipo-cambuza {
+    background-color: #27ae60;
+    color: white;
+    box-shadow: 0 1px 3px rgba(39, 174, 96, 0.3);
 }
 
 .comanda-total {

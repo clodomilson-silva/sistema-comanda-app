@@ -232,10 +232,22 @@ class DatabaseManager {
                 nome TEXT NOT NULL,
                 preco REAL NOT NULL,
                 quantidade INTEGER NOT NULL DEFAULT 1,
+                type TEXT DEFAULT 'bar',
                 FOREIGN KEY (comanda_id) REFERENCES comandas(id) ON DELETE CASCADE,
                 FOREIGN KEY (produto_id) REFERENCES produtos(id)
             )
         `);
+        
+        // Adicionar coluna type se não existir (para bancos antigos)
+        try {
+            this.db.exec(`ALTER TABLE comanda_itens ADD COLUMN type TEXT DEFAULT 'bar'`);
+            console.log('✅ Coluna type adicionada à tabela comanda_itens');
+        } catch (error) {
+            // Coluna já existe, ignorar erro
+            if (!error.message.includes('duplicate column')) {
+                console.log('ℹ️ Coluna type já existe em comanda_itens');
+            }
+        }
 
         console.log('✅ Tabelas criadas/verificadas');
     }
@@ -335,8 +347,8 @@ class DatabaseManager {
 
     addItemComanda(comandaId, itemData) {
         const insert = this.db.prepare(`
-            INSERT INTO comanda_itens (comanda_id, produto_id, nome, preco, quantidade)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO comanda_itens (comanda_id, produto_id, nome, preco, quantidade, type)
+            VALUES (?, ?, ?, ?, ?, ?)
         `);
 
         const result = insert.run(
@@ -344,11 +356,12 @@ class DatabaseManager {
             itemData.produtoId,
             itemData.nome,
             itemData.preco,
-            itemData.quantidade || 1
+            itemData.quantidade || 1,
+            itemData.type || 'bar'
         );
 
         const novoItem = this.db.prepare('SELECT * FROM comanda_itens WHERE id = ?').get(result.lastInsertRowid);
-        console.log(`➕ Item adicionado à comanda ${comandaId}: ${itemData.nome}`);
+        console.log(`➕ Item adicionado à comanda ${comandaId}: ${itemData.nome} [${itemData.type || 'bar'}]`);
         return novoItem;
     }
 
