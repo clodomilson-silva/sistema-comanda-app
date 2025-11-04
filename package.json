@@ -10,6 +10,9 @@
     "rebuild": "electron-rebuild",
     "postinstall": "electron-rebuild",
     "verify-db": "electron verify-database.js",
+    "verify-tipos": "electron verificar-tipos.js",
+    "migrate-tipos": "electron migrate-tipos.js",
+    "reset-db": "rm -f comanda.db && echo 'Banco de dados resetado. Será recriado na próxima execução.'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
